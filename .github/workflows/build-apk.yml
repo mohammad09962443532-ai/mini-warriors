@@ -1,0 +1,39 @@
+name: Build Mini Warriors APK
+
+on:
+workflow_dispatch:
+push:
+paths:
+- 'MiniWarriors_Godot_Starter.zip'
+- '.github/workflows/build-apk.yml'
+
+jobs:
+build:
+runs-on: ubuntu-latest
+
+steps:
+  - name: Download project
+    uses: actions/checkout@v4
+
+  - name: Install Godot and Android tools
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y unzip wget openjdk-17-jdk android-sdk
+      wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip -O godot.zip
+      unzip -q godot.zip -d godot
+      chmod +x godot/Godot_v4.3-stable_linux.x86_64
+
+  - name: Extract project
+    run: |
+      unzip -q MiniWarriors_Godot_Starter.zip -d project
+      mv project/MiniWarriors_Godot_Starter project/game
+
+  - name: Check project
+    run: |
+      ./godot/Godot_v4.3-stable_linux.x86_64 --headless --path project/game --editor --quit
+
+  - name: Save project files
+    uses: actions/upload-artifact@v4
+    with:
+      name: MiniWarriors-Project
+      path: project/game/
