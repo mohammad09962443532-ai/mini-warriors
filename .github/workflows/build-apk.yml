@@ -64,5 +64,4 @@ jobs:
           name: MiniWarriors-Project
           path: |
             ${{ env.PROJECT_DIR }}/
-0
 
