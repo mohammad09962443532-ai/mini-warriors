@@ -7,45 +7,45 @@ on:
       - master
 
 jobs:
-check-project:
-runs-on: ubuntu-latest
+  check-project:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  - name: Install unzip
-    run: sudo apt-get update && sudo apt-get install -y unzip
+      - name: Install unzip
+        run: sudo apt-get update && sudo apt-get install -y unzip
 
-  - name: Extract game ZIP if needed
-    run: |
-      if [ ! -f project.godot ]; then
-        ZIP_FILE=$(find . -maxdepth 1 -iname '*.zip' -print -quit)
-        if [ -n "$ZIP_FILE" ]; then
-          unzip -o "$ZIP_FILE" -d extracted
-          PROJECT_FILE=$(find extracted -name project.godot -print -quit)
-          if [ -n "$PROJECT_FILE" ]; then
-            cp -r "$(dirname "$PROJECT_FILE")"/. .
+      - name: Find Godot project
+        run: |
+          if [ ! -f project.godot ]; then
+            ZIP_FILE=$(find . -maxdepth 1 -iname '*.zip' -print -quit)
+            if [ -n "$ZIP_FILE" ]; then
+              unzip -o "$ZIP_FILE" -d extracted
+              PROJECT_FILE=$(find extracted -name project.godot -print -quit)
+              if [ -n "$PROJECT_FILE" ]; then
+                cp -r "$(dirname "$PROJECT_FILE")"/. .
+              fi
+            fi
           fi
-        fi
-      fi
 
-  - name: Verify project files
-    run: |
-      test -f project.godot
-      test -f Main.tscn
-      test -f main.gd
-      echo "Mini Warriors project files found."
+      - name: Verify project
+        run: |
+          test -f project.godot
+          test -f Main.tscn
+          test -f main.gd
+          echo "Project files verified."
 
-  - name: Upload project files
-    uses: actions/upload-artifact@v4
-    with:
-      name: MiniWarriors-Project
-      path: |
-        project.godot
-        Main.tscn
-        main.gd
-        player.gd
-        bot.gd
-        bullet.gd
-        README.md
+      - name: Upload project
+        uses: actions/upload-artifact@v4
+        with:
+          name: MiniWarriors-Project
+          path: |
+            project.godot
+            Main.tscn
+            main.gd
+            player.gd
+            bot.gd
+            bullet.gd
+            README.md
